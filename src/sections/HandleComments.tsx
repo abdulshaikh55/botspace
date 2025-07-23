@@ -29,7 +29,8 @@ const HandleComments = ({ onSpecificWordsChange }: HandleCommentsProps) => {
     setSpecificWordsInput(inputValue);
     const words = inputValue.split(',').map(word => word.trim()).filter(word => word.length > 0);
     setCurrentSpecificWords(words);
-    onSpecificWordsChange(words); // Send updates to parent in real-time
+    onSpecificWordsChange(words);
+    console.log(currentSpecificWords)
   };
 
   const handleChipClick = (word: string) => {
