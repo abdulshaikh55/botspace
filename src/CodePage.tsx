@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import Mobile from './components/Mobile'; // Assuming Mobile is in components
+import Mobile from './components/Mobile';
 import postThumbnails from './data/thumbnails';
 import SelectPost from './sections/SelectPost';
 import HandleComments from './sections/HandleComments';
-import HandleDM from './sections/HandleDM'; // Assuming HandleDM is in sections
+import HandleDM from './sections/HandleDM';
 
 const CodePage = () => {
   const [showCommentSection, setShowCommentSection] = useState(false);
@@ -20,7 +20,7 @@ const CodePage = () => {
   const [firstMessage, setFirstMessage] = useState(
     `Hey there! I'm so happy you're here, thanks so much for your interest 😊\n\nClick below and I'll send you the link in just a sec ✨`
   );
-  const [linkText, setLinkText] = useState('Send me the link'); // Renamed from textLink for clarity
+  const [linkText, setLinkText] = useState('Send me the link');
   const [mainMessage, setMainMessage] = useState('');
 
   // Callbacks for HandleDM to update state in CodePage
