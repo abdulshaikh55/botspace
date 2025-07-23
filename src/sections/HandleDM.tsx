@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; // Import useEffect
+import { useState, useEffect } from 'react';
 import { Box, Typography, Switch, TextField, Button, Link } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -40,22 +40,23 @@ const HandleDM = ({ onFirstMessageChange, onLinkTextChange, onMainMessageChange 
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        pr: 1,
         bgcolor: 'background.paper',
         borderRadius: 1,
-        mb: 2
+        mb: 1,
+        position: 'relative',
+        zIndex: 1
       }}>
         <Typography variant="body1">an opening DM</Typography>
         <Switch
           checked={openingDM}
           onChange={(e) => setOpeningDM(e.target.checked)}
           color="primary"
+          sx={{ zIndex: 2 }}
         />
       </Box>
 
       {openingDM && (
         <Box sx={{
-          pr: 2,
           bgcolor: 'background.paper',
           borderRadius: 1,
           mb: 2
@@ -68,11 +69,6 @@ const HandleDM = ({ onFirstMessageChange, onLinkTextChange, onMainMessageChange 
             onChange={(e) => setOpeningMessage(e.target.value)}
             variant="outlined"
             sx={{ mb: 1 }}
-          // You can also call the prop directly here if you prefer
-          // onChange={(e) => {
-          //   setOpeningMessage(e.target.value);
-          //   onFirstMessageChange(e.target.value);
-          // }}
           />
           <TextField
             fullWidth
@@ -80,11 +76,6 @@ const HandleDM = ({ onFirstMessageChange, onLinkTextChange, onMainMessageChange 
             value={linkText}
             onChange={(e) => setLinktext(e.target.value)}
             variant="outlined"
-          // You can also call the prop directly here if you prefer
-          // onChange={(e) => {
-          //   setLinktext(e.target.value);
-          //   onLinkTextChange(e.target.value);
-          // }}
           />
 
           <Link
@@ -104,29 +95,36 @@ const HandleDM = ({ onFirstMessageChange, onLinkTextChange, onMainMessageChange 
         </Box>
       )}
 
+      {/* DM with Link Section - Critical Area for the Issue */}
       <Box sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        p: 2,
         bgcolor: 'background.paper',
         borderRadius: 1,
-        mb: 2
+        position: 'relative',
+        zIndex: 1
+
       }}>
         <Typography variant="body1">a DM with the link</Typography>
         <Switch
           checked={dmWithLink}
-          onChange={(e) => setDmWithLink(e.target.checked)}
+          onChange={(e) => {
+            setDmWithLink(e.target.checked);
+          }}
           color="primary"
+          sx={{
+            cursor: 'pointer',
+            zIndex: 2
+          }}
         />
       </Box>
 
       {dmWithLink && (
         <Box sx={{
-          p: 2,
           bgcolor: 'background.paper',
           borderRadius: 1,
-          mb: 2
+          mb: 1
         }}>
           <TextField
             multiline
