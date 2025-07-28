@@ -1,49 +1,65 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, RadioGroup, Radio, FormControlLabel, TextField, Chip } from '@mui/material';
 
 interface HandleCommentsProps {
   onSpecificWordsChange: (words: string[]) => void;
 }
 
+const SUGGESTED_WORDS = ['Price', 'Link', 'Shop'];
+
 const HandleComments = ({ onSpecificWordsChange }: HandleCommentsProps) => {
   const [commentFilterValue, setCommentFilterValue] = useState('specific_words');
   const [specificWordsInput, setSpecificWordsInput] = useState('');
-
-
   const [currentSpecificWords, setCurrentSpecificWords] = useState<string[]>([]);
 
   const handleCommentFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCommentFilterValue(event.target.value);
-    if (event.target.value === 'any_word') {
+    const value = event.target.value;
+    setCommentFilterValue(value);
+    if (value === 'any_word') {
+      setSpecificWordsInput('');
       setCurrentSpecificWords([]);
       onSpecificWordsChange([]);
     } else {
-      const words = specificWordsInput.split(',').map(word => word.trim()).filter(word => word.length > 0);
+      // When switching back from "any_word" to "specific_words" no need to do anything special,
+      // the effect will handle input processing.
+    }
+  };
+
+  useEffect(() => {
+    if (commentFilterValue === 'specific_words') {
+      const words = specificWordsInput
+        .split(',')
+        .map(word => word.trim())
+        .filter(word => word.length > 0);
+
       setCurrentSpecificWords(words);
       onSpecificWordsChange(words);
     }
-  }
+    // else do nothing if any_word selected
+  }, [specificWordsInput, commentFilterValue, onSpecificWordsChange]);
 
   const handleSpecificWordsInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value;
-    setSpecificWordsInput(inputValue);
-    const words = inputValue.split(',').map(word => word.trim()).filter(word => word.length > 0);
-    setCurrentSpecificWords(words);
-    onSpecificWordsChange(words);
-    console.log(currentSpecificWords)
+    setSpecificWordsInput(event.target.value);
   };
 
   const handleChipClick = (word: string) => {
-    const newWords = specificWordsInput ? `${specificWordsInput}, ${word}` : word;
-    setSpecificWordsInput(newWords);
-    const words = newWords.split(',').map(item => item.trim()).filter(item => item.length > 0);
-    setCurrentSpecificWords(words);
-    onSpecificWordsChange(words); // Send updates to parent
-  }
+    const wordsSet = new Set(
+      specificWordsInput
+        .split(',')
+        .map(w => w.trim())
+        .filter(w => w.length > 0)
+    );
+    wordsSet.add(word);
+
+    const newInput = Array.from(wordsSet).join(', ');
+    setSpecificWordsInput(newInput);
+  };
 
   return (
     <Box sx={{ width: '100%', mt: 4 }}>
-      <Typography sx={{ mb: 2 }} variant='h5' fontWeight={600} color="text.primary">And this comment has</Typography>
+      <Typography sx={{ mb: 2 }} variant="h5" fontWeight={600} color="text.primary">
+        And this comment has
+      </Typography>
 
       <RadioGroup
         aria-label="comment-content-options"
@@ -52,19 +68,20 @@ const HandleComments = ({ onSpecificWordsChange }: HandleCommentsProps) => {
         onChange={handleCommentFilterChange}
         sx={{ width: '100%' }}
       >
-        {/* Option 1: A specific word or words */}
         <FormControlLabel
           value="specific_words"
           control={<Radio size="small" />}
           label={
             <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-              <Typography variant="body1" color="text.primary">a specific word or words</Typography>
+              <Typography variant="body1" color="text.primary">
+                a specific word or words
+              </Typography>
               {commentFilterValue === 'specific_words' && (
                 <Box sx={{ mt: 1, width: '100%' }}>
                   <TextField
                     fullWidth
                     variant="outlined"
-                    placeholder="Price, Link, Shop" // Updated placeholder for clarity
+                    placeholder="Price, Link, Shop"
                     value={specificWordsInput}
                     onChange={handleSpecificWordsInputChange}
                     sx={{ mb: 1 }}
@@ -84,7 +101,7 @@ const HandleComments = ({ onSpecificWordsChange }: HandleCommentsProps) => {
                     Use commas to separate words
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                    {['Price', 'Link', 'Shop'].map((word) => (
+                    {SUGGESTED_WORDS.map((word) => (
                       <Chip
                         key={word}
                         label={word}
@@ -104,20 +121,15 @@ const HandleComments = ({ onSpecificWordsChange }: HandleCommentsProps) => {
           }}
         />
 
-        {/* Option 2: Any word */}
         <FormControlLabel
           value="any_word"
           control={<Radio size="small" />}
-          label={
-            <Typography variant="body1" color="text.primary">any word</Typography>
-          }
-          sx={{
-            width: '100%',
-          }}
+          label={<Typography variant="body1" color="text.primary">any word</Typography>}
+          sx={{ width: '100%' }}
         />
       </RadioGroup>
     </Box>
-  )
-}
+  );
+};
 
 export default HandleComments;

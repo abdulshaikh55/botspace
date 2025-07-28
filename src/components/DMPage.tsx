@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, Typography, IconButton, InputBase, Avatar, Button } from '@mui/material'; // Import Button
+import {
+  Box,
+  Typography,
+  IconButton,
+  InputBase,
+  Avatar,
+  Button,
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ImageIcon from '@mui/icons-material/Image';
@@ -14,13 +21,23 @@ interface DMPageProps {
   openingMessage: string;
   linkText: string;
   mainMessage: string;
+  onBackClick?: () => void; // Optional callback to close or navigate back
+  onLinkClick?: () => void; // Optional handler for the button with linkText
 }
 
-const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, linkText, mainMessage }) => {
+const DMPage: React.FC<DMPageProps> = ({
+  visible,
+  userProfile,
+  openingMessage,
+  linkText,
+  mainMessage,
+  onBackClick,
+  onLinkClick,
+}) => {
   if (!visible) return null;
 
-  const dmSenderAvatar = userProfile; // Re-using userProfile for botspacehq's avatar
-  const dmSenderName = "botspacehq";
+  const dmSenderAvatar = userProfile;
+  const dmSenderName = 'botspacehq';
 
   return (
     <Box
@@ -37,7 +54,7 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
         flexDirection: 'column',
       }}
     >
-      {/* cylinder */}
+      {/* Cylinder */}
       <Box
         sx={{
           width: 60,
@@ -50,10 +67,11 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
           transform: 'translateX(-50%)',
           zIndex: 2,
           opacity: 0.7,
+          userSelect: 'none',
         }}
       />
 
-
+      {/* Header */}
       <Box
         sx={{
           display: 'flex',
@@ -63,36 +81,40 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
           mt: 3,
           position: 'relative',
           flexDirection: 'row',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
-
-        <Box sx={{ display: 'inherit', alignItems: 'center' }}>
-          <IconButton size='small' sx={{ color: "#fff", pr: 0 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            size="small"
+            sx={{ color: '#fff', pr: 0 }}
+            onClick={onBackClick}
+            aria-label="Go back"
+          >
             <ChevronLeftIcon />
           </IconButton>
-          <IconButton sx={{ color: "#fff" }}><Avatar src={dmSenderAvatar} sx={{ width: 22, height: 22 }} /> </IconButton>
+          <IconButton sx={{ color: '#fff' }} aria-label={`${dmSenderName} profile`}>
+            <Avatar src={dmSenderAvatar} sx={{ width: 22, height: 22 }} />
+          </IconButton>
           <Typography
-            sx={{
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: 600,
-            }}
+            sx={{ color: '#fff', fontSize: 14, fontWeight: 600, ml: 1 }}
+            component="span"
           >
             {dmSenderName}
           </Typography>
         </Box>
-        <Box sx={{ mr: 1.7 }}>
-          <IconButton sx={{ color: '#fff', pr: 0 }}>
+        <Box sx={{ mr: 1.7, display: 'flex', gap: 0.5 }}>
+          <IconButton sx={{ color: '#fff', p: 0 }} aria-label="Audio call">
             <LocalPhoneRoundedIcon />
           </IconButton>
-          <IconButton sx={{ color: '#fff', pr: 0 }}>
+          <IconButton sx={{ color: '#fff', p: 0 }} aria-label="Video call">
             <VideocamRoundedIcon />
           </IconButton>
         </Box>
       </Box>
 
-      {/* Messages / Comments List */}
+      {/* Messages List */}
       <Box
         sx={{
           flex: 1,
@@ -103,10 +125,16 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
           flexDirection: 'column',
           gap: 1.5,
         }}
+        role="log"
+        aria-live="polite"
       >
-        {/* First Message (from botspacehq) */}
+        {/* Opening message from botspacehq */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-          <Avatar src={dmSenderAvatar} sx={{ width: 24, height: 24, flexShrink: 0 }} />
+          <Avatar
+            src={dmSenderAvatar}
+            sx={{ width: 24, height: 24, flexShrink: 0 }}
+            alt={`${dmSenderName} avatar`}
+          />
           <Box
             sx={{
               bgcolor: '#262626',
@@ -133,13 +161,15 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
                   bgcolor: '#444444',
                 },
               }}
+              onClick={onLinkClick}
+              aria-label={linkText}
             >
               {linkText}
             </Button>
           </Box>
         </Box>
 
-        {/* User's Message (right-aligned) */}
+        {/* User's message (right aligned) */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: 0.5 }}>
           <Box
             sx={{
@@ -157,9 +187,13 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
           </Box>
         </Box>
 
-        {/* Action Button (from botspacehq - "Send me the link") */}
+        {/* Main message from botspacehq */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-          <Avatar src={dmSenderAvatar} sx={{ width: 24, height: 24, flexShrink: 0 }} />
+          <Avatar
+            src={dmSenderAvatar}
+            sx={{ width: 24, height: 24, flexShrink: 0 }}
+            alt={`${dmSenderName} avatar`}
+          />
           <Box
             sx={{
               bgcolor: '#262626',
@@ -177,7 +211,7 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
         </Box>
       </Box>
 
-      {/* Comment Input */}
+      {/* Message Input */}
       <Box
         sx={{
           borderRadius: 5,
@@ -186,10 +220,12 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
           mx: 1,
           display: 'flex',
           alignItems: 'center',
-          mb: 1
+          mb: 1,
         }}
       >
-        <IconButton color='primary' size='small'><CameraAltIcon fontSize='small' /></IconButton>
+        <IconButton color="primary" size="small" aria-label="Add photo">
+          <CameraAltIcon fontSize="small" />
+        </IconButton>
         <InputBase
           placeholder="Message..."
           sx={{
@@ -204,12 +240,19 @@ const DMPage: React.FC<DMPageProps> = ({ visible, userProfile, openingMessage, l
               opacity: 1,
             },
           }}
+          inputProps={{ 'aria-label': 'Type your message' }}
         />
-        <IconButton sx={{ color: '#fff' }} size='small'><ImageIcon fontSize='small' /></IconButton>
-        <IconButton sx={{ color: '#fff' }} size='small'><ImageAspectRatioSharpIcon fontSize='small' /></IconButton>
-        <IconButton sx={{ color: '#fff' }} size='small'><AddCircleOutlineRoundedIcon fontSize='small' /></IconButton>
+        <IconButton sx={{ color: '#fff' }} size="small" aria-label="Insert image">
+          <ImageIcon fontSize="small" />
+        </IconButton>
+        <IconButton sx={{ color: '#fff' }} size="small" aria-label="Adjust image aspect ratio">
+          <ImageAspectRatioSharpIcon fontSize="small" />
+        </IconButton>
+        <IconButton sx={{ color: '#fff' }} size="small" aria-label="Add attachment">
+          <AddCircleOutlineRoundedIcon fontSize="small" />
+        </IconButton>
       </Box>
-    </Box >
+    </Box>
   );
 };
 
